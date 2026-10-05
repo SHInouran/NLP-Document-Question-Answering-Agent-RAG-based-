@@ -1,0 +1,19 @@
+# --- Vector Storage & Embeddings ---
+chromadb>=0.4.22
+sentence-transformers>=2.5.0
+torch>=2.0.0
+transformers>=4.38.0
+einops>=0.7.0
+
+# --- LLM API Client ---
+openai>=1.12.0
+
+# --- Web Frontend UI ---
+streamlit>=1.31.0
+
+# --- Utility & Helper Libraries ---
+python-dotenv>=1.0.0
+numpy>=1.24.0
+tqdm>=4.66.0
+
+

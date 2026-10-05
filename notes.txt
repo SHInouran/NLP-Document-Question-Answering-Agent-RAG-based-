@@ -1,0 +1,32 @@
+Vector indexing
+To accelerate similarity search in high-dimensional space, vector databases create indexes on stored vector embeddings. Indexing maps the vectors to new data structures, enabling faster similarity or distance searches between vectors.
+
+These indexes support approximate nearest-neighbor (ANN) search, which retrieves similar vectors without scanning the entire dataset. Common ANN indexing algorithms include hierarchical navigable small world (HNSW) and locality-sensitive hashing (LSH):
+
+HNSW creates a hierarchical, multi-layer graph that uses long-range links in the upper layers and dense local links in the bottom layer.1
+LSH groups vectors into buckets through a hash function so that similar vectors fall into the same bucket.
+In addition to ANN indexes, vector databases often use product quantization (PQ) to reduce memory usage. PQ converts each dataset into a short code that preserves relative distance (rather than storing every vector), allowing systems to store larger collections while maintaining efficient search performance.
+
+
+different ways embedding models convert search queries and documents into mathematical representations (vectors) to find relevant information:
+1- Dense Retrieval (Semantic Search):
+Dense retrieval maps an entire sentence or document into a single fixed-length vector where almost every index contains a non-zero floating-point number (e.g., [0.12, -0.85, 0.43, ...]).
+How it works: It captures high-level context and semantic meaning rather than exact keywords.
+Best for: Understanding synonyms, intent, and natural language concepts (e.g., matching "How to treat a headache" with "Migraine pain relief options").
+Limitation: Can struggle with exact keyword matching, part numbers, or rare jargon names because the specific details get compressed into a single overall summary vector.
+
+2. Sparse Retrieval (Lexical / Term Matching)
+Sparse retrieval creates very long vectors matching a large vocabulary size (tens of thousands of dimensions), where most entries are zero. Non-zero values represent the presence and importance of specific words or tokens in the text.
+How it works: Modern neural sparse models (like SPLADE) or traditional algorithms (like BM25) assign weight to specific terms in the query and document.
+Best for: Exact keyword matching, product IDs, technical terminology, or specific proper nouns (e.g., searching for "ERR_CONNECTION_TIMED_OUT").
+Limitation: Fails when the query and document use completely different words to mean the same thing.
+
+3. Multi-Vector Retrieval (Token-Level Interaction)
+Instead of compressing an entire document into a single vector like dense retrieval, multi-vector models generate a separate embedding for every single token (word/subword) in the text. A famous implementation of this is ColBERT.
+How it works: When a search query is submitted, the model compares each query token vector against all document token vectors using late interaction (e.g., MaxSim).
+Best for: Combining the semantic flexibility of dense models with fine-grained term-level precision.
+Limitation: Requires significantly more storage and computational resources because every document generates dozens or hundreds of vectors instead of just one.
+
+
+
+Vector DB Selection Note: BGE-M3 generates both dense and sparse embeddings.   Qdrant natively supports both dense vectors and sparse vectors in the same collection, making native Hybrid Search straightforward.FAISS only supports dense vectors (so you would need a separate BM25 index like rank_bm25 for hybrid search).Recommendation: Qdrant (local Docker instance or qdrant-client in-memory mode) is much cleaner for this specific architecture.
