@@ -8,7 +8,7 @@ class AnswerGenerator:
     def __init__(
         self, 
         # Recommended free production model on Groq
-        model_name: str = "openai/gpt-oss-20b", 
+        model_name: str = "openai/gpt-oss-120b", 
         api_key: str = None,
         base_url: str = "https://api.groq.com/openai/v1"
     ):
@@ -36,7 +36,7 @@ class AnswerGenerator:
         """Formats retrieved doc chunks into a numbered context block."""
         context_parts = []
         for idx, doc in enumerate(retrieved_docs, 1):
-            source = doc['metadata'].get('source_file', 'Unknown Source')
+            source = doc['metadata'].get('source', 'Unknown Source')
             title = doc['metadata'].get('title', 'Untitled Section')
             text = doc['text']
             
@@ -92,7 +92,7 @@ class AnswerGenerator:
         sources = [
             {
                 "title": doc['metadata'].get('title', 'Unknown'),
-                "source_file": doc['metadata'].get('source_file', 'Unknown')
+                "source": doc['metadata'].get('source', 'Unknown')
             }
             for doc in retrieved_docs
         ]
@@ -105,13 +105,6 @@ class AnswerGenerator:
 
 if __name__ == "__main__":
     print("--- Testing Generator Module with Groq ---")
-
-    mock_docs = [
-        {
-            "text": "A Pod is the smallest execution unit in Kubernetes. It encapsulates one or more containers.",
-            "metadata": {"title": "Pod Overview", "source_file": "docs/concepts/workloads/pods.md"}
-        }
-    ]
 
     # Initialize generator using default Groq settings
     generator = AnswerGenerator()

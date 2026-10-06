@@ -36,7 +36,7 @@ selected_model_key = st.sidebar.selectbox(
 # Show selected model parameters
 model_info = EmbeddingModel.MODELS[selected_model_key]
 st.sidebar.caption(f"**Repo:** `{model_info['name']}`")
-st.sidebar.caption(f"**Dimensions:** `{model_info['dimensions']}`")
+st.sidebar.caption(f"**Dimensions:** `{model_info['dim']}`")
 st.sidebar.caption(f"**Description:** {model_info['description']}")
 
 st.sidebar.divider()
@@ -53,9 +53,10 @@ top_k = st.sidebar.slider(
 # 2. Pipeline Initialization (Cached for performance)
 @st.cache_resource(show_spinner=False)
 def load_pipeline(api_key: str):
+    db_path = "/kaggle/working/RAG/chroma_db" if os.path.exists("/kaggle/working/RAG") else "./chroma_db"
     return RAGPipeline(
-        db_path="./chroma_db",
-        llm_model="openai/gpt-oss-20b",
+        db_path=db_path,
+        llm_model="openai/gpt-oss-120b",
         groq_api_key=api_key
     )
 
@@ -109,6 +110,6 @@ if st.button("Submit Question", type="primary"):
         with col2:
             st.subheader("🔍 Context Details")
             for idx, doc in enumerate(result["retrieved_documents"], 1):
-                with st.expander(f"Chunk #{idx} | Similarity Score: {doc['similarity_score']}"):
-                    st.markdown(f"**Source File:** `{doc['metadata'].get('source_file')}`")
+                with st.expander(f"Chunk #{idx} | Similarity Score: {doc['score']}"):
+                    st.markdown(f"**Source File:** `{doc['metadata'].get('source')}`")
                     st.text_area("Content", value=doc["text"], height=150, key=f"chunk_{idx}")

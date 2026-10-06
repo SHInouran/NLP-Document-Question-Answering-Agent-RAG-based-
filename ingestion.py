@@ -3,7 +3,7 @@ import re
 
 from typing import List, Dict
 
-DOCS_DIR = "/documents/website/content/en/docs"
+DOCS_DIR = "/kaggle/working/RAG/documents"
 
 def clean_hugo_md(content: str) -> tuple[str, str]:
     """
@@ -65,7 +65,5 @@ def ingest_docs(docs_dir: str) -> List[Dict[str, str]]:
 if __name__ == "__main__":
     # Test our loader on a small scale
     print("Loading and chunking Kubernetes documents...")
-    # chunks = load_and_process_docs(DOCS_DIR)
-    # print(f"Total chunks created: {len(chunks)}")
-                
-    
+    chunks = ingest_docs(DOCS_DIR)
+    print(f"Total chunks created: {len(chunks)}")

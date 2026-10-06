@@ -4,7 +4,7 @@ from Retriever import Retriever
 from Generator import AnswerGenerator
 
 class RAGPipeline:
-    def __init__(self, db_path:str ="./chroma_db", llm_model:str ="openai/gpt-oss-20b" , groq_api_key:str = None):
+    def __init__(self, db_path:str ="/kaggle/working/RAG/chroma_db", llm_model:str ="openai/gpt-oss-120b" , groq_api_key:str = None):
         self.retriever = Retriever(db_path=db_path)
         self.answer_generator = AnswerGenerator(model_name=llm_model, api_key=groq_api_key)
 
@@ -29,10 +29,10 @@ if __name__ == "__main__":
     print("--- Testing Full RAG Pipeline ---")
 
     # Initialize overall pipeline (connected to our test vector DB)
-    pipeline = RAGPipeline(db_path="./test_chroma_db")
+    pipeline = RAGPipeline(db_path="/kaggle/working/RAG/chromaDB/test_real_db")
 
     # Run query end-to-end
-    result = pipeline.query_rag(
+    result = pipeline.Query(
         query="What is a Pod in Kubernetes?",
         model_key="minilm",
         top_k=2
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     print(f"ANSWER:\n{result['answer']}\n")
     print("CITED SOURCES:")
     for source in result['sources']:
-        print(f" - {source['title']} ({source['source_file']})")
+        print(f" - {source['title']} ({source['source']})")
