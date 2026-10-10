@@ -3,7 +3,7 @@ from typing import Any, List,Dict
 from sentence_transformers import SentenceTransformer
 
 class VectorDatabase:
-    def __init__(self, db_path:str = "/kaggle/working/RAG/chroma_db"):
+    def __init__(self, db_path:str = "/kaggle/working/RAG/chromaDB/test_chroma_db"):
         self.db_path = db_path
         self.client = chromadb.PersistentClient(path=self.db_path)
         print(f"connected to chroma db at : {self.db_path}")

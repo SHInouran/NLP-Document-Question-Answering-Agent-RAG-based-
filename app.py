@@ -53,7 +53,7 @@ top_k = st.sidebar.slider(
 # 2. Pipeline Initialization (Cached for performance)
 @st.cache_resource(show_spinner=False)
 def load_pipeline(api_key: str):
-    db_path = "/kaggle/working/RAG/chroma_db" if os.path.exists("/kaggle/working/RAG") else "./chroma_db"
+    db_path = "/kaggle/working/RAG/chromaDB/real_test_db" if os.path.exists("/kaggle/working/RAG") else "./chroma_db/chromaDB/real_test_db"
     return RAGPipeline(
         db_path=db_path,
         llm_model="openai/gpt-oss-120b",
