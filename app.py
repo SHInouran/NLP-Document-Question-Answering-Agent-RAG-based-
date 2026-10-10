@@ -53,9 +53,14 @@ top_k = st.sidebar.slider(
 # 2. Pipeline Initialization (Cached for performance)
 @st.cache_resource(show_spinner=False)
 def load_pipeline(api_key: str):
-    db_path = "/kaggle/working/RAG/chromaDB/real_test_db" if os.path.exists("/kaggle/working/RAG") else "./chroma_db/chromaDB/real_test_db"
+    kaggle_root = "/kaggle/working/RAG"
+    local_root = "."
+    root = kaggle_root if os.path.exists(kaggle_root) else local_root
+    db_path = os.path.join(root, "chromaDB", "real_test_db")
+    docs_dir = os.path.join(root, "documents")
     return RAGPipeline(
         db_path=db_path,
+        docs_dir=docs_dir,
         llm_model="openai/gpt-oss-120b",
         groq_api_key=api_key
     )
@@ -103,7 +108,7 @@ if st.button("Submit Question", type="primary"):
             if result["sources"]:
                 for idx, src in enumerate(result["sources"], 1):
                     st.markdown(f"**{idx}. {src['title']}**")
-                    st.caption(f"Path: `{src['source_file']}`")
+                    st.caption(f"Path: `{src['source']}`")
             else:
                 st.write("No sources cited.")
 

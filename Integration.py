@@ -6,10 +6,22 @@ from bm25_retriever import BM25Retriever
 from ingestion import ingest_docs
 
 class RAGPipeline:
-    def __init__(self, db_path:str ="/kaggle/working/RAG/chromaDB/real_test_db", llm_model:str ="openai/gpt-oss-120b" , groq_api_key:str = None ):
-        self.docs = ingest_docs(docs_dir="/kaggle/working/RAG/documents") 
-        self.retriever = Retriever(db_path=db_path)
-        self.bm25 = BM25Retriever(db_path= db_path)
+    def __init__(
+        self,
+        db_path:str ="/kaggle/working/RAG/chromaDB/real_test_db",
+        docs_dir: str = "/kaggle/working/RAG/documents",
+        llm_model:str ="openai/gpt-oss-120b",
+        groq_api_key:str = None
+    ):
+        if not os.path.exists(docs_dir):
+            raise FileNotFoundError(f"Documents directory not found: {docs_dir}")
+
+        self.docs = ingest_docs(docs_dir=docs_dir)
+        if not self.docs:
+            raise ValueError(f"No markdown chunks were loaded from: {docs_dir}")
+
+        self.retriever = Retriever(db_path = db_path)
+        self.bm25 = BM25Retriever(docs = self.docs)
         self.answer_generator = AnswerGenerator(model_name=llm_model, api_key=groq_api_key)
         
 

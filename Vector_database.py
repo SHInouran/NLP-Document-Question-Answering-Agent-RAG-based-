@@ -13,6 +13,16 @@ class VectorDatabase:
         collection = self.client.get_or_create_collection(name=collection_name, metadata={"hnsw:space": "cosine"})
         return collection
 
+    def get_collection(self, model_key: str):
+        collection_name = f"k8s_docs_{model_key}"
+        return self.client.get_collection(name=collection_name)
+
+    def collection_count(self, model_key: str) -> int:
+        try:
+            return self.get_collection(model_key).count()
+        except Exception:
+            return 0
+
     def add_documents(self, model_key: str, texts:List[str] ,embeddings: List[List[float]], metadatas: List[Dict[str,Any]] , ids: List[str]) :
         collection = self.get_create_collection(model_key) 
         print(f"adding{len(texts)} items to collection '{collection.name}")
@@ -20,10 +30,19 @@ class VectorDatabase:
         print(f"success adding documents to collection '{collection.name}'")
 
     def query_similarity( self, model_key: str, query_embedding: List[float], n_results: int= 5) -> List[Dict[str,Any]]:
-        collection = self.get_create_collection(model_key)
+        try:
+            collection = self.get_collection(model_key)
+        except Exception as exc:
+            raise ValueError(
+                f"Chroma collection 'k8s_docs_{model_key}' does not exist in {self.db_path}. "
+                "Build the index with the same embedding model before querying."
+            ) from exc
+
         if collection.count() == 0 :
-            print(f"warning : collection '{collection.name}' is empty")
-            return {"documents":[[]], "metadatas": [[]] , "distances": [[]]}
+            raise ValueError(
+                f"Chroma collection '{collection.name}' is empty in {self.db_path}. "
+                "Your retrieval step has no embedded documents to search."
+            )
 
         results = collection.query(query_embeddings = [query_embedding], n_results = n_results)
         return results

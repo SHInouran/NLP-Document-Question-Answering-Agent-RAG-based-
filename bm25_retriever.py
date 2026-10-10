@@ -31,7 +31,7 @@ class BM25Retriever:
         for idx in top_indices:
             if scores[idx] > 0:  # Only return documents with matching terms
                 doc = self.docs[idx].copy()
-                doc["bm25_score"] = float(scores[idx])
+                doc["score"] = float(scores[idx])
                 results.append(doc)
                 
         return results
