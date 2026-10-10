@@ -19,7 +19,7 @@ class EmbeddingModel:
             "description": "A model optimized for generating embeddings for various NLP tasks." 
         }
     }
-    def __init__(self, model_key: str = "minilm" , device: str= "cpu"):
+    def __init__(self, model_key: str = "minilm" , device: str= "cuda"):
         if model_key not in self.MODELS:
             raise ValueError (f"Model'{model_key}'not supported")
         self.model_key = model_key
